@@ -1,92 +1,149 @@
+
 # Machine Failure & Maintenance Risk Analysis
 
 ## Overview
 
-Analysis of industrial machine sensor data to identify failure drivers and support maintenance decision-making. The workflow integrates SQL-based data preparation with a Tableau dashboard to evaluate operational risk across wear and load conditions.
+This project analyzes industrial machine sensor data to identify failure patterns and enable **risk-based maintenance decisions**.
+The workflow integrates **SQL-driven data preparation** with a **Tableau dashboard** to detect high-risk operating conditions and prioritize machine inspection.
 
 ---
 
 ## Dataset
 
-Source: UCI Machine Learning Repository
-AI4I 2020 Predictive Maintenance Dataset
-https://archive.ics.uci.edu/ml/datasets/AI4I+2020+Predictive+Maintenance+Dataset
+| Attribute | Description                                                                                                                                                          |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source    | UCI Machine Learning Repository                                                                                                                                      |
+| Dataset   | AI4I 2020 Predictive Maintenance                                                                                                                                     |
+| Records   | ~10,000                                                                                                                                                              |
+| Link      | [https://archive.ics.uci.edu/ml/datasets/AI4I+2020+Predictive+Maintenance+Dataset](https://archive.ics.uci.edu/ml/datasets/AI4I+2020+Predictive+Maintenance+Dataset) |
 
-~10,000 records capturing machine-level observations including tool wear, torque, temperature, rotational speed, failure type, and machine status.
+### Key Variables
+
+| Category    | Fields                                                |
+| ----------- | ----------------------------------------------------- |
+| Operational | Tool Wear, Torque, Rotational Speed                   |
+| Thermal     | Air Temperature, Process Temperature, Temp Difference |
+| Status      | Machine Status (Normal / Failed), Failure Types       |
+| Identifier  | UID (unique machine ID)                               |
 
 ---
 
 ## Objective
 
-* Quantify failure behavior under varying operating conditions
-* Segment machines into risk zones using wear and torque
-* Evaluate failure rate distribution across segments
-* Translate patterns into maintenance action categories
+* Identify conditions leading to machine failure
+* Segment operational risk using key parameters
+* Quantify failure probability across operating zones
+* Rank machines based on risk for targeted maintenance
 
 ---
 
 ## Data Preparation (SQL)
 
-Structured data pipeline implemented for cleaning, transformation, and feature creation.
+Data was transformed into an analytics-ready layer using structured SQL pipelines.
 
-**Key steps:**
+### Key Transformations
 
 * Duplicate removal and null handling
 * Standardization of categorical fields
 * Feature engineering:
 
-  * Torque Bucket (Low / Medium / High)
-  * Wear Zone (Low / Medium / High)
-* Aggregation of failure rates by segment
-* Creation of analysis-ready views
+  * **Wear Zones** (Low / Medium / High)
+  * **Torque Buckets** (Low / Medium / High)
+  * **Temperature Difference & Zones**
+* Risk modeling:
 
-**Core SQL functions:**
-`COUNT()`, `SUM()`, `AVG()`, `CASE WHEN`, `GROUP BY`, `HAVING`,
-`ROW_NUMBER()`, `DENSE_RANK()`, `TRIM()`, `COALESCE()`, `CAST()`
+  * **Risk Score (0–100 scale)**
+  * **Risk Level (Low / Medium / High)**
 
----
+### SQL Techniques Used
 
-## Dashboard (Tableau)
-
-https://public.tableau.com/views/PredictiveMaintenanceandRiskInsight/PredictiveMaintenanceDashboard
-
-Interactive dashboard designed for operational analysis and decision support.
-
-**Components:**
-
-* KPI summary: failure rate, total failures, total records, average torque, average wear
-* Risk matrix: failure rate across wear zone × torque bucket
-* Operating map: tool wear vs torque with failure classification and trend analysis
-* Maintenance action view: mapping risk segments to recommended actions
+| Category         | Functions                  |
+| ---------------- | -------------------------- |
+| Aggregation      | COUNT(), AVG(), SUM()      |
+| Logic            | CASE WHEN                  |
+| Window Functions | ROW_NUMBER(), DENSE_RANK() |
+| Cleaning         | TRIM(), COALESCE(), CAST() |
+| Grouping         | GROUP BY, HAVING           |
 
 ---
 
-## Key Findings
+## Tableau Dashboard
 
-* Failure rate is highest in **high wear + high torque** conditions (~13%)
-* Failures are concentrated at elevated tool wear levels (>180)
-* Risk is driven by combined operating conditions rather than single variables
-* Majority of operations fall within low-risk regions, with failures clustered in specific segments
-* High-risk zones require immediate inspection to prevent escalation
+🔗 **Live Dashboard**
+[https://public.tableau.com/views/PredictiveMaintenanceandRiskInsight/PredictiveMaintenanceDashboard](https://public.tableau.com/views/PredictiveMaintenanceandRiskInsight/PredictiveMaintenanceDashboard)
 
 ---
 
-## Functional Capabilities
+### KPI Summary
 
-* Segment-based risk evaluation
-* Drill-down analysis to machine (UID) level
-* Interactive filtering between risk matrix and operating map
-* Direct linkage between failure patterns and maintenance actions
-
----
-
-## Tools
-
-SQL, Tableau Public, Data Analysis
+| Metric         | Value    |
+| -------------- | -------- |
+| Failure Rate   | 3.4%     |
+| Total Failures | 339      |
+| Total Records  | 10,000   |
+| Avg Torque     | 39.99 Nm |
+| Avg Tool Wear  | 108.0    |
 
 ---
 
-## Repository Contents
+### Dashboard Components
 
-* SQL scripts for data preparation
-* Dashboard documentation
+| Component                   | Purpose                                 |
+| --------------------------- | --------------------------------------- |
+| **KPI Panel**               | High-level system health overview       |
+| **Risk Matrix (Heatmap)**   | Failure rate across Wear × Torque zones |
+| **Operating Map (Scatter)** | Distribution of machine behavior        |
+| **Maintenance Actions**     | Risk-based action mapping               |
+| **Top Risk Machines**       | Ranked list of highest-risk machines    |
+
+---
+
+## Key Insights
+
+* Failure rate peaks in **High Wear + High Torque** zone (~13%+)
+* Failures cluster strongly when **Tool Wear > 180**
+* Risk is **multi-factor driven**, not dependent on a single variable
+* Temperature difference contributes to **risk escalation patterns**
+* Majority of machines operate in low-risk zones, but failures are **highly concentrated**
+
+---
+
+## Industrial Use Case (Quality / Maintenance Engineering)
+
+This dashboard directly supports real shop-floor decision making:
+
+* **Prioritization**
+  Instead of monitoring all machines equally, engineers can focus on **high-risk zones and machines**
+
+* **Targeted Inspection**
+  The **Top Risk Machines panel** identifies specific machines needing immediate attention
+
+* **Early Failure Detection**
+  Combined analysis of wear, torque, and temperature enables detection of **pre-failure conditions**
+
+* **Maintenance Optimization**
+  Supports shift from reactive maintenance to **predictive, condition-based intervention**
+
+* **Resource Efficiency**
+  Helps allocate inspection and maintenance resources to **maximum-risk areas**
+
+---
+
+## Outcome
+
+* Translates raw sensor data into actionable maintenance insights
+* Enables **risk-based decision making** in industrial environments
+* Improves maintenance efficiency and reduces unexpected downtime
+
+---
+
+## Tools & Technologies
+
+| Tool          | Usage                                              |
+| ------------- | -------------------------------------------------- |
+| SQL           | Data cleaning, transformation, feature engineering |
+| Tableau       | Dashboard visualization and interaction            |
+| Data Analysis | Risk modeling and segmentation                     |
+
+
+
